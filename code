@@ -1,0 +1,745 @@
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JLabel;
+import java.awt.Font;
+import javax.swing.JTextField;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+/**
+ * Write a description of class Bank_GUI here.
+ *
+ * Fiza Shrestha
+ * 8 May, 2023
+ */
+
+public class Bank_GUI implements ActionListener
+{//local veriable for m1
+    private JFrame frame_obj;
+    private JPanel panel_obj;
+    private JButton DebitButton, CreditButton;
+    
+    //local variable for Debit Card
+    private JFrame frame_dc;
+    private JPanel panel_dc;
+    private JLabel Debit_Card, CardID_dc, BalanceAmount_dc,BankAccount_dc, IssuerBank_dc, ClientName_dc, PinNumber_dc, WithdrawalAmount_dc,DateOfWithdrawal_dc;
+    private JTextField Field_CardID_dc, Field_BalanceAmount_dc, Field_BankAccount_dc, Field_IssuerBank_dc, Field_ClientName_dc, Field_PinNumber_dc, Field_WithdrawalAmount_dc;
+    private JButton add_DebitCard, add_GoBack, add_Withdraw, add_Display, add_Clear;
+    private JComboBox day_dc, month_dc, year_dc;
+
+    //local variable for Credit Card
+    private JFrame frame_cc;
+    private JPanel panel_cc;
+    private JLabel Credit_Card, CardID_cc, BalanceAmount_cc, BankAccount_cc, IssuerBank_cc, ClientName_cc, CVCNumber_cc, InterestRate_cc, ExpirationDate_cc, CreditLimit_cc, GracePeriod_cc;
+    private JTextField Field_CardID_cc, Field_BalanceAmount_cc, Field_BankAccount_cc, Field_IssuerBank_cc, Field_ClientName_cc, Field_CVCNumber_cc, Field_InterestRate_cc, Field_CreditLimit_cc, Field_GracePeriod_cc;
+    private JButton add_CreditCard, add_CancelCard, add_GoBack_cc, add_CreditLimit, add_Display_cc, add_Clear_cc;
+    private JComboBox day_cc, month_cc, year_cc;
+    
+    //arraylist- CREATE an array lsit of type bank card....INITIALIZE....
+    ArrayList<Bank_Card> Arr_list = new ArrayList<Bank_Card>();
+    
+
+ public void actionPerformed(ActionEvent BankGUI)
+ {
+    //debit card button
+    if (BankGUI.getSource() == DebitButton)
+    {
+    debit_card();
+    }
+    //credit card button
+    else if(BankGUI.getSource() == CreditButton)
+    {
+    credit_card();
+    }
+    
+     else if (BankGUI.getSource() == add_DebitCard)
+    {
+    //getting text of debit card
+    int Balance_Amount = Integer.valueOf(Field_BalanceAmount_dc.getText());
+    int Card_Id = Integer.valueOf(Field_CardID_dc.getText());
+    String Bank_Account = Field_BankAccount_dc.getText();
+    String Issuer_Bank = Field_IssuerBank_dc.getText();
+    String Client_Name = Field_ClientName_dc.getText();
+    int PIN_Number = Integer.valueOf(Field_PinNumber_dc.getText());
+    
+    //when card id is repeated, message is shown:
+    boolean b1 = true ;
+    
+    //for each loop
+    for ( Bank_Card i: Arr_list)
+    {
+
+    // instance of operator for getting the value
+    if (i instanceof Debit_Card)
+    {
+    //downcasting
+    Debit_Card obj_debitcard = (Debit_Card) i;
+
+    //comparing values of card id
+   if (obj_debitcard.getCard_Id () == Card_Id)
+  {
+   b1= false;
+ }
+
+}
+  }
+   
+  if (b1==true)
+  {
+   //creating object
+    Debit_Card obj_debitcard = new Debit_Card(Balance_Amount, Card_Id, Bank_Account, Issuer_Bank, Client_Name, PIN_Number);
+    
+    //arraylist
+    Arr_list.add(obj_debitcard);
+    
+    
+    //for dialog message
+    JOptionPane.showMessageDialog(panel_dc, "Successfully added!");
+    
+    }
+    
+    else 
+    {
+    JOptionPane.showMessageDialog(panel_dc, "The debit card with Card Id: " + Card_Id + " has already been added.");
+    }
+    
+    
+    }
+    else if (BankGUI.getSource() == add_GoBack)
+    {
+        
+    frame_dc.dispose();
+
+    }
+    
+     else if (BankGUI.getSource() == add_Withdraw)
+    {
+    int wCard_ID = Integer.valueOf(Field_CardID_dc.getText());
+    int PIN_Number = Integer.valueOf(Field_PinNumber_dc.getText());
+    int WithdrawalAmount = Integer.valueOf(Field_WithdrawalAmount_dc.getText());                       
+    
+    String year = year_dc.getSelectedItem().toString();
+    String month = month_dc.getSelectedItem().toString();
+    String day = day_dc.getSelectedItem().toString();
+    String DateOfWithdrawal = year+month+day;
+    
+    for ( Bank_Card i: Arr_list)
+    {
+
+    // instance of operator for getting value
+    if (i instanceof Debit_Card)
+    {
+    //downcasting
+    Debit_Card obj_debitcard = (Debit_Card) i;
+
+
+   if (obj_debitcard.getCard_Id () == wCard_ID)
+  {
+ // message dialog
+ JOptionPane.showMessageDialog(panel_dc, "The Card Id is: " + (wCard_ID) + "\n" + "The Withdrawal amount is: " + (WithdrawalAmount) + "\n" + "Date of withdrawal is: "
+ + (DateOfWithdrawal) + "\n" + "The pin number is: " + (PIN_Number));
+ 
+ //calling withdraw method
+ if (PIN_Number == obj_debitcard.getPIN_Number())
+ {
+     if( WithdrawalAmount <= obj_debitcard.getBalance_Amount())
+     {
+        obj_debitcard.Withdraw(WithdrawalAmount, DateOfWithdrawal, PIN_Number);
+        //message dialog
+        JOptionPane.showMessageDialog(panel_dc, "The transaction was successful.");
+        }
+        else
+        {
+        JOptionPane.showMessageDialog(panel_dc, "The balance amount in not sufficient");
+        }
+    }
+    else
+    {
+        JOptionPane.showMessageDialog(panel_dc, "The PIN number does not match.");
+        }
+ }
+ else
+ {
+     JOptionPane.showMessageDialog(panel_dc, "Card ID not found.");
+    }
+
+  }
+
+  }
+}
+     
+    else if (BankGUI.getSource() == add_Display)
+    {
+    int wCard_ID = Integer.valueOf(Field_CardID_dc.getText());
+    int PIN_Number = Integer.valueOf(Field_PinNumber_dc.getText());
+    int WithdrawalAmount = Integer.valueOf(Field_WithdrawalAmount_dc.getText()); 
+    int balanceamount = Integer.valueOf(Field_BalanceAmount_dc.getText()); 
+    String bankaccount = (Field_BankAccount_dc.getText());
+    String clientname = (Field_ClientName_dc.getText());
+    String issuerbank = (Field_IssuerBank_dc.getText());
+    
+    String year = year_dc.getSelectedItem().toString();
+    String month = month_dc.getSelectedItem().toString();
+    String day = day_dc.getSelectedItem().toString();
+    String DateOfWithdrawal = year+month+day;
+    
+    for (Bank_Card displaying: Arr_list)
+        {
+    Debit_Card debitcard = (Debit_Card) displaying;
+    debitcard.display();
+    String[] message = {"The Issuer Bank is: " + issuerbank +"\n" + "The card ID is: " + wCard_ID +"\n" + "The Client name is: " + clientname +"\n" + "The bank account is: " + bankaccount + "\n" + "The balance amount is: " + balanceamount + "\n" +
+        "The pin number is: " + PIN_Number + "\n" + "The withdrawal amount is: " + WithdrawalAmount + "\n" + "The date of withdrawal is: " + DateOfWithdrawal  };
+        JOptionPane.showMessageDialog(panel_dc, message);
+}
+    }
+    else if (BankGUI.getSource() == add_Clear)
+    {
+    Field_CardID_dc.setText("");
+    Field_BalanceAmount_dc.setText("");
+    Field_BankAccount_dc.setText("");
+    Field_IssuerBank_dc.setText("");
+    Field_ClientName_dc.setText("");
+    Field_PinNumber_dc.setText("");
+    Field_WithdrawalAmount_dc.setText("");
+    }
+    
+    
+    
+    //for credit card
+    else if (BankGUI.getSource() == add_CreditCard)
+    {
+    //gettign text of credit card
+   int Card_Id = Integer.valueOf(Field_CardID_cc.getText());
+   String Client_Name = Field_ClientName_cc.getText();
+   String Issuer_Bank = Field_IssuerBank_cc.getText();
+   String Bank_Account = Field_BankAccount_cc.getText();
+   int Balance_Amount = Integer.valueOf(Field_BalanceAmount_cc.getText());
+   int CVC_Number = Integer.valueOf(Field_CVCNumber_cc.getText());
+   double Interest_Rate = Double.valueOf(Field_InterestRate_cc.getText());
+   String DAY = day_cc.getSelectedItem().toString();
+   String MONTH = month_cc.getSelectedItem().toString();
+   String YEAR = year_cc.getSelectedItem().toString();
+   String Expiration_Date = DAY + MONTH + YEAR;
+   
+    //when card id is repeated
+    boolean b2 = true ;
+    
+    //for each loop
+    for ( Bank_Card i: Arr_list)
+    {     
+    // instance of operator for getting value
+    if (i instanceof Credit_Card)
+    {
+    //downcasting
+    Credit_Card obj_creditcard = (Credit_Card) i;
+
+
+   if (obj_creditcard.getCard_Id () == Card_Id)
+  {
+   b2= false;
+ }
+
+  }
+
+  }
+   
+  if (b2==true)
+   
+  { //creating object
+   Credit_Card obj_creditcard = new Credit_Card(Card_Id, Client_Name, Issuer_Bank, Bank_Account, Balance_Amount, CVC_Number, Interest_Rate, Expiration_Date);
+   
+   //arraylist
+   Arr_list.add(obj_creditcard);
+   
+   //for dialog message
+    JOptionPane.showMessageDialog(panel_cc, "Successfully added!");
+    }
+     else if (b2== false)
+    {
+    JOptionPane.showMessageDialog(panel_cc, "The credit card with card id: " + Card_Id + " has already been added.");
+    }
+}
+    else if (BankGUI.getSource() == add_CancelCard)
+    {
+        { try
+        {int Card_ID = Integer.valueOf(Field_CardID_cc.getText());
+        boolean b3 = true;
+       
+        for ( Bank_Card i: Arr_list)
+        {
+            // instance of operator for getting value
+            if (i instanceof Credit_Card)
+            {
+              //downcasting(converting)
+              Credit_Card obj_creditcard = (Credit_Card) i;    
+              // comparing the value of card_id (if the values are same or not)
+              if (obj_creditcard.getCard_Id() == Card_ID)
+               {
+                 obj_creditcard.Cancel_Credit_Card();
+               }
+            }
+        }
+            if (b3 == true)
+            {
+             JOptionPane.showMessageDialog(panel_cc, "Credit card is cancelled");
+       
+            }}
+            catch (Exception e)
+            
+            {
+             JOptionPane.showMessageDialog(panel_cc, "Credit card is cancelled");
+
+    }
+}
+}
+     //go back button for credit card
+     else if (BankGUI.getSource() == add_GoBack_cc)
+    {
+    //calling main gui
+    m1();
+    }
+
+    else if (BankGUI.getSource() == add_CreditLimit)
+    { 
+    double cc_Credit_Limit = Double.valueOf(Field_CreditLimit_cc.getText());
+    int cc_Grace_Period = Integer.valueOf(Field_GracePeriod_cc.getText());
+    int cc_Card_Id = Integer.valueOf(Field_CardID_cc.getText());
+    
+    for ( Bank_Card i: Arr_list)
+        {
+            // instance of operator for getting value
+            if (i instanceof Credit_Card)
+            {
+              //downcasting(converting)
+              Credit_Card obj_creditcard = (Credit_Card) i;    
+              // comparing the value of card_id (if the values are same or not)
+              if (obj_creditcard.getCard_Id() == cc_Card_Id)
+                {
+                       //message dialog
+                   JOptionPane.showMessageDialog(panel_cc, "The card id is: "+ cc_Card_Id+ "\n"+ "The garce period is: "+ cc_Grace_Period +
+                   "\n" + "The credit limit is: "+ cc_Credit_Limit);
+             
+               
+                    if (cc_Credit_Limit<=2.5* obj_creditcard.getBalance_Amount()) //calling set_creditlimit method
+                    {
+                     JOptionPane.showMessageDialog(panel_cc,"Your Credit Limit is successful." );
+                    }
+   
+                    else
+                   {
+                     JOptionPane.showMessageDialog(panel_cc,"Your Credit Limit is unsuccessful. " ,"Please try again.",JOptionPane.WARNING_MESSAGE);
+       
+   
+                    }
+                }
+            }
+        }
+    }
+    
+    else if (BankGUI.getSource() == add_Display_cc)
+    {
+    int Card_ID = Integer.valueOf(Field_CardID_cc.getText());
+    int CVC_Number = Integer.valueOf(Field_CVCNumber_cc.getText()); 
+    int balanceamount = Integer.valueOf(Field_BalanceAmount_cc.getText()); 
+    String bankaccount = (Field_BankAccount_cc.getText());
+    String clientname = (Field_ClientName_cc.getText());
+    String issuerbank = (Field_IssuerBank_cc.getText());
+    double interestrate = Double.valueOf(Field_InterestRate_cc.getText());
+    
+    String year = year_dc.getSelectedItem().toString();
+    String month = month_dc.getSelectedItem().toString();
+    String day = day_dc.getSelectedItem().toString();
+    String DateOfWithdrawal = year+month+day;
+    
+    for (Bank_Card displaying: Arr_list)
+        {
+    Credit_Card creditcard = (Credit_Card) displaying;
+    creditcard.display();
+    String[] message = {"The Issuer bank is: " + issuerbank +"\n" + "The card ID is: " + Card_ID +"\n" + "The Client name is: " + clientname +"\n"+ "The bank account is: " + bankaccount + "\n" + 
+        "The balance amount is: " + balanceamount + "\n" +"The CVC number is: " + CVC_Number + "\n" +
+        "The Interest rate is: " + interestrate +"\n" + "The date of withdrawal is: " + DateOfWithdrawal 
+        };
+        JOptionPane.showMessageDialog(panel_cc, message);
+}
+    }
+    else if (BankGUI.getSource() == add_Clear_cc)
+    {
+    Field_CardID_cc.setText("");
+    Field_BalanceAmount_cc.setText("");
+    Field_BankAccount_cc.setText("");
+    Field_IssuerBank_cc.setText("");
+    Field_ClientName_cc.setText("");
+    Field_CVCNumber_cc.setText("");
+    Field_InterestRate_cc.setText("");
+    Field_CreditLimit_cc.setText("");
+    Field_GracePeriod_cc.setText("");
+    }
+}
+    
+//main method
+ public static void main (String args[])
+   {
+    Bank_GUI object = new Bank_GUI();
+    object.m1();
+    }
+    //FOR FIRST PAGE
+    public void m1()
+    {
+    //creating JFrame
+    frame_obj = new JFrame();
+    frame_obj.setTitle("COURSEWORK 2 GUI");
+    frame_obj.setBounds(100,100,750,700);
+    frame_obj.setResizable(false);
+    frame_obj.setLayout(null);
+    
+    //creating JPanel
+    panel_obj = new JPanel();
+    panel_obj.setBounds(0, 0, 700, 700);
+    panel_obj.setLayout(null);
+    
+    //button for debit card
+    DebitButton = new JButton();
+    DebitButton.setText("DEBIT CARD");
+    DebitButton.setBounds(150,150,450,100);
+    DebitButton.setFont(new Font ("Arial",Font.PLAIN,35));
+    panel_obj.add(DebitButton);
+    DebitButton.addActionListener(this);
+    
+    //button for credit card
+    CreditButton = new JButton();
+    CreditButton.setText("CREDIT CARD");
+    CreditButton.setBounds(150,350,450,100);
+    CreditButton.setFont(new Font ("Arial",Font.PLAIN,35));
+    panel_obj.add(CreditButton);
+    CreditButton.addActionListener(this);
+    
+    //adding JPanel to JFrame
+    
+    frame_obj.add(panel_obj);
+    frame_obj.setVisible(true);
+    }
+    
+    //FOR DEBIT CARD
+   public void debit_card()
+   {
+    //creating JFrame
+    frame_dc = new JFrame();
+    frame_dc.setTitle("COURSEWORK 2 GUI");
+    frame_dc.setBounds(100,100,900,800);
+    frame_dc.setResizable(false);
+    frame_dc.setLayout(null);
+    
+    //creating JPanel
+    panel_dc = new JPanel();
+    panel_dc.setBounds(0, 0, 850, 900);
+    panel_dc.setLayout(null);
+    
+    //creating JLabel
+    Debit_Card= new JLabel("DEBIT CARD");
+    Debit_Card.setBounds(330,30,350,26);
+    Debit_Card.setFont(new Font ("Arial",Font.PLAIN,35));
+    panel_dc.add(Debit_Card);
+    
+    CardID_dc = new JLabel("Card ID");
+    CardID_dc.setBounds(50,100,80,25);
+    CardID_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(CardID_dc);
+    
+    BalanceAmount_dc = new JLabel("Balance Amount");
+    BalanceAmount_dc.setBounds(50,120,200,92);
+    BalanceAmount_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(BalanceAmount_dc);
+    
+    BankAccount_dc= new JLabel("Bank Account");
+    BankAccount_dc.setBounds(50,140,280,155);
+    BankAccount_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(BankAccount_dc);
+    
+    IssuerBank_dc = new JLabel("Issuer Bank");
+    IssuerBank_dc.setBounds(500,100,150,25);
+    IssuerBank_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(IssuerBank_dc);
+    
+    ClientName_dc = new JLabel("Client Name");
+    ClientName_dc.setBounds(500,120,200,92);
+    ClientName_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(ClientName_dc);
+    
+    PinNumber_dc= new JLabel("Pin Number");
+    PinNumber_dc.setBounds(500,140,280,155);
+    PinNumber_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(PinNumber_dc);
+    
+    WithdrawalAmount_dc= new JLabel("Withdrawal Amount");
+    WithdrawalAmount_dc.setBounds(50,340,280,155);
+    WithdrawalAmount_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(WithdrawalAmount_dc);
+    
+    DateOfWithdrawal_dc= new JLabel("Date of Withdrawal");
+    DateOfWithdrawal_dc.setBounds(50,390,280,155);
+    DateOfWithdrawal_dc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(DateOfWithdrawal_dc);
+    
+    //adding JTextField
+    Field_CardID_dc = new JTextField("");
+    Field_CardID_dc.setBounds(130,100,200,25);
+    panel_dc.add(Field_CardID_dc);
+
+    Field_BalanceAmount_dc = new JTextField("");
+    Field_BalanceAmount_dc.setBounds(220,155,200,25);
+    panel_dc.add(Field_BalanceAmount_dc);
+    
+    Field_BankAccount_dc = new JTextField("");
+    Field_BankAccount_dc.setBounds(200,205,200,25);
+    panel_dc.add(Field_BankAccount_dc);
+    
+    Field_IssuerBank_dc = new JTextField("");
+    Field_IssuerBank_dc.setBounds(630,100,200,25);
+    panel_dc.add(Field_IssuerBank_dc);
+    
+    Field_ClientName_dc = new JTextField("");
+    Field_ClientName_dc.setBounds(630,153,200,25);
+    panel_dc.add(Field_ClientName_dc);
+    
+    Field_PinNumber_dc = new JTextField("");
+    Field_PinNumber_dc.setBounds(630,205,200,25);
+    panel_dc.add(Field_PinNumber_dc);
+    
+    Field_WithdrawalAmount_dc = new JTextField("");
+    Field_WithdrawalAmount_dc.setBounds(250,408,200,25);
+    panel_dc.add(Field_WithdrawalAmount_dc);
+    
+    //adding JButton
+    add_DebitCard = new JButton();
+    add_DebitCard.setText("Add Debit Card");
+    add_DebitCard.setBounds(350,300,200,30);
+    add_DebitCard.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(add_DebitCard);
+    add_DebitCard.addActionListener(this);
+    
+    add_GoBack = new JButton();
+    add_GoBack.setText("Go Back");
+    add_GoBack.setBounds(690,340,150,30);
+    add_GoBack.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(add_GoBack);
+    add_GoBack.addActionListener(this);
+    
+    add_Withdraw = new JButton();
+    add_Withdraw.setText("Withdraw");
+    add_Withdraw.setBounds(300,550,150,30);
+    add_Withdraw.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(add_Withdraw);
+    add_Withdraw.addActionListener(this);
+    
+    add_Display = new JButton();
+    add_Display.setText("Display");
+    add_Display.setBounds(475,550,150,30);
+    add_Display.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(add_Display);
+    add_Display.addActionListener(this);
+    
+    add_Clear = new JButton();
+    add_Clear.setText("Clear");
+    add_Clear.setBounds(650,550,150,30);
+    add_Clear.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_dc.add(add_Clear);
+    add_Clear.addActionListener(this);
+
+    //adding JComboBox
+    String [] Day = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30",};
+    day_dc = new JComboBox(Day);
+    day_dc.setBounds (240,455,75,30);
+    panel_dc.add(day_dc);
+    
+    String [] Month = {"jan","feb","mar","apr","may","jun","jul","aug","sept","oct","nov","dec"};
+    month_dc = new JComboBox(Month);
+    month_dc.setBounds (340,455,75,30);
+    panel_dc.add(month_dc);
+    
+    String [] Year = {"2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023"};
+    year_dc = new JComboBox(Year);
+    year_dc.setBounds (440,455,75,30);
+    panel_dc.add(year_dc);
+    
+    //adding JPanel to JFrame
+    
+    frame_dc.add(panel_dc);
+    frame_dc.setVisible(true);
+    }
+    
+    //FOR CREDIT CARD
+    public void credit_card()
+   {
+    //creating JFrame
+    JFrame frame_cc = new JFrame();
+    frame_cc.setTitle("COURSEWORK 2 GUI");
+    frame_cc.setBounds(100,100,900,800);
+    frame_cc.setResizable(false);
+    frame_cc.setLayout(null);
+    
+    //creating JPanel
+    JPanel panel_cc = new JPanel();
+    panel_cc.setBounds(0, 0, 850, 800);
+    panel_cc.setLayout(null);
+    
+    //creating JLabel
+    Credit_Card= new JLabel("CREDIT CARD");
+    Credit_Card.setBounds(330,30,350,26);
+    Credit_Card.setFont(new Font ("Arial",Font.PLAIN,35));
+    panel_cc.add(Credit_Card);
+    
+    CardID_cc = new JLabel("Card ID");
+    CardID_cc.setBounds(50,100,80,25);
+    CardID_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(CardID_cc);
+    
+    BalanceAmount_cc = new JLabel("Balance Amount");
+    BalanceAmount_cc.setBounds(50,110,200,92);
+    BalanceAmount_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(BalanceAmount_cc);
+    
+    BankAccount_cc= new JLabel("Bank Account");
+    BankAccount_cc.setBounds(50,130,280,155);
+    BankAccount_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(BankAccount_cc);
+    
+    IssuerBank_cc = new JLabel("Issuer Bank");
+    IssuerBank_cc.setBounds(520,95,150,30);
+    IssuerBank_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(IssuerBank_cc);
+    
+    ClientName_cc = new JLabel("Client Name");
+    ClientName_cc.setBounds(520,110,200,92);
+    ClientName_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(ClientName_cc);
+    
+    CVCNumber_cc= new JLabel("CVC Number");
+    CVCNumber_cc.setBounds(520,130,280,155);
+    CVCNumber_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(CVCNumber_cc);
+    
+    InterestRate_cc= new JLabel("Interest Rate");
+    InterestRate_cc.setBounds(50,300,280,155);
+    InterestRate_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(InterestRate_cc);
+    
+    ExpirationDate_cc= new JLabel("Expiration Date");
+    ExpirationDate_cc.setBounds(50,370,280,155);
+    ExpirationDate_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(ExpirationDate_cc);
+    
+    CreditLimit_cc= new JLabel("Credit Limit");
+    CreditLimit_cc.setBounds(50,430,280,155);
+    CreditLimit_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(CreditLimit_cc);
+    
+    GracePeriod_cc= new JLabel("Grace Period");
+    GracePeriod_cc.setBounds(50,490,280,155);
+    GracePeriod_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(GracePeriod_cc);
+    
+    //adding JTextField
+    Field_CardID_cc = new JTextField("");
+    Field_CardID_cc.setBounds(140,100,200,25);
+    panel_cc.add(Field_CardID_cc);
+
+    Field_BalanceAmount_cc = new JTextField("");
+    Field_BalanceAmount_cc.setBounds(220,148,200,25);
+    panel_cc.add(Field_BalanceAmount_cc);
+    
+    Field_BankAccount_cc = new JTextField("");
+    Field_BankAccount_cc.setBounds(200,200,200,25);
+    panel_cc.add(Field_BankAccount_cc);
+    
+    Field_IssuerBank_cc = new JTextField("");
+    Field_IssuerBank_cc.setBounds(650,100,200,25);
+    panel_cc.add(Field_IssuerBank_cc);
+    
+    Field_ClientName_cc = new JTextField("");
+    Field_ClientName_cc.setBounds(650,148,200,25);
+    panel_cc.add(Field_ClientName_cc);
+    
+    Field_CVCNumber_cc = new JTextField("");
+    Field_CVCNumber_cc.setBounds(650,200,200,25);
+    panel_cc.add(Field_CVCNumber_cc);
+    
+    Field_InterestRate_cc = new JTextField("");
+    Field_InterestRate_cc.setBounds(180,368,200,25);
+    panel_cc.add(Field_InterestRate_cc);
+    
+    Field_CreditLimit_cc = new JTextField("");
+    Field_CreditLimit_cc.setBounds(170,495,200,25);
+    panel_cc.add(Field_CreditLimit_cc);
+    
+    Field_GracePeriod_cc = new JTextField("");
+    Field_GracePeriod_cc.setBounds(180,555,200,25);
+    panel_cc.add(Field_GracePeriod_cc);
+    
+    //adding JButton
+    add_CreditCard = new JButton();
+    add_CreditCard.setText("Add Credit Card");
+    add_CreditCard.setBounds(300,280,200,26);
+    add_CreditCard.setFont(new Font ("Arial",Font.PLAIN,20));
+    add_CreditCard.addActionListener(this);
+    panel_cc.add(add_CreditCard);
+    
+    add_CancelCard = new JButton();
+    add_CancelCard.setText("Cancel Credit Card");
+    add_CancelCard.setBounds(580,280,250,26);
+    add_CancelCard.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(add_CancelCard);
+    add_CancelCard.addActionListener(this);
+    
+    add_GoBack_cc = new JButton();
+    add_GoBack_cc.setText("Go Back");
+    add_GoBack_cc.setBounds(570,418,150,26);
+    add_GoBack_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(add_GoBack_cc);
+    add_GoBack_cc.addActionListener(this);
+    
+    add_CreditLimit = new JButton();
+    add_CreditLimit.setText("Add Credit Limit");
+    add_CreditLimit.setBounds(450,495,200,26);
+    add_CreditLimit.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(add_CreditLimit);
+    add_CreditLimit.addActionListener(this);
+    
+    add_Display_cc = new JButton();
+    add_Display_cc.setText("Display");
+    add_Display_cc.setBounds(700,515,150,26);
+    add_Display_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(add_Display_cc);
+    add_Display_cc.addActionListener(this);
+    
+    add_Clear_cc = new JButton();
+    add_Clear_cc.setText("Clear");
+    add_Clear_cc.setBounds(515,560,150,26);
+    add_Clear_cc.setFont(new Font ("Arial",Font.PLAIN,20));
+    panel_cc.add(add_Clear_cc);
+    add_Clear_cc.addActionListener(this);
+
+    //adding JComboBox
+    String [] Day = {"1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19","20","21","22","23","24","25","26","27","28","29","30",};
+    day_cc = new JComboBox(Day);
+    day_cc.setBounds (200,438,70,25);
+    panel_cc.add(day_cc);
+    
+    String [] Month = {"jan","feb","mar","apr","may","jun","jul","aug","sept","oct","nov","dec"};
+    month_cc = new JComboBox(Month);
+    month_cc.setBounds (300,438,70,25);
+    panel_cc.add(month_cc);
+    
+    String [] Year = {"2000","2001","2002","2003","2004","2005","2006","2007","2008","2009","2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020","2021","2022","2023"};
+    year_cc = new JComboBox(Year);
+    year_cc.setBounds (400,438,70,25);
+    panel_cc.add(year_cc);
+    
+    //adding JPanel to JFrame
+    
+    frame_cc.add(panel_cc);
+    frame_cc.setVisible(true);
+    }
+}
